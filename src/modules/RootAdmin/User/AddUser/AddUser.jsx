@@ -36,7 +36,7 @@ const AddUser = () => {
   const onSubmit = async (values) => {
     try {
       await usersAPI.addUser(values);
-      //reset();
+      form.reset();
 
     } catch (error) {
       throw error;

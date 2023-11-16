@@ -44,6 +44,15 @@ export const deleteUser = createAsyncThunk(
   }
   })
 
+  export const editUser = createAsyncThunk("users/editUser", async ({ id, user }) => {
+    try {
+      const data = await userAPI.editUser(id, user);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  });
+
 const userSlice = createSlice({
   name: "users",
   initialState,
@@ -73,6 +82,20 @@ const userSlice = createSlice({
     });
     builder.addCase(getUserById.rejected, (state,action) => {
         return {...state, loadingUser: false, errorUser: action.error.message};
+    });
+
+    // Edit user
+    builder.addCase(editUser.pending, (state, action) => {
+      return { ...state, loading: true };
+    });
+    builder.addCase(editUser.fulfilled, (state, action) => {
+      const updatedUsers = state.users.map((user) =>
+        user.id === action.payload.id ? action.payload : user
+      );
+      return { ...state, loading: false, users: updatedUsers };
+    });
+    builder.addCase(editUser.rejected, (state, action) => {
+      return { ...state, loading: false, error: action.error.message };
     });
   },
 });
